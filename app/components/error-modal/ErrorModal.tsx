@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import style from "./ErrorModal.module.scss";
+import styles from "./ErrorModal.module.scss";
 import Button from "~/components/button/Button";
 
 type Props = {
@@ -11,16 +11,16 @@ type Props = {
 
 export default function ErrorModal({ title, message, onClose, onRetry }: Props) {
   return (
-    <div className={style.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose}>
       <div
-        className={style.dialog}
+        className={styles.dialog}
         onClick={(e) => {
           e.stopPropagation();
         }}
       >
-        <h2 className={style.title}>{title}</h2>
-        <p className={style.message}>{message}</p>
-        <div className={style.actions}>
+        <h2 className={styles.title}>{title}</h2>
+        <p className={styles.message}>{message}</p>
+        <div className={styles.actions}>
           {onRetry && <Button onClick={onRetry}>Retry</Button>}
           <Button variant="secondary" onClick={onClose}>
             Close
