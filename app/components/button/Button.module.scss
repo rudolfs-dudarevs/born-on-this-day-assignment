@@ -1,0 +1,22 @@
+@mixin buttonBase {
+  appearance: none;
+  border: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  color: var(--white);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.primary {
+  @include buttonBase;
+  background: var(--primary);
+}
+.secondary {
+  @include buttonBase;
+  background: var(--secondary);
+}
