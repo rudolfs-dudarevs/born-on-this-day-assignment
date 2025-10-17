@@ -1,0 +1,15 @@
+.birthdayList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .item {
+    padding: 1rem;
+    background: var(--white);
+
+    .year {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+  }
+}
