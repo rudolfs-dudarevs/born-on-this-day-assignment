@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 
 type Birth = { text: string; year: number };
 
@@ -9,7 +9,9 @@ type SortOrder = "asc" | "desc";
 type BirthdaysContextValue = {
   birthdays: Birth[];
   isLoading: boolean;
+  error: string | null;
   getBirthdays: () => Promise<void>;
+  dismissError: () => void;
   sortOrder: SortOrder;
   toggleSort: () => void;
   currentPage: number;
@@ -26,18 +28,40 @@ export function BirthdaysProvider({ children }: { children: ReactNode }) {
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(7);
+  const [error, setError] = useState<string | null>(null);
+
+  const inFlight = useRef<AbortController | null>(null);
 
   function toggleSort() {
     setSortOrder((state) => (state === "desc" ? "asc" : "desc"));
   }
 
+  function dismissError() {
+    setError(null);
+  }
+
   async function getBirthdays() {
+    inFlight.current?.abort();
+    const controller = new AbortController();
+    inFlight.current = controller;
+
     setIsLoading(true);
+    setError(null);
+
     try {
       const data = await fetchBirthdays();
+
       setBirthdays(data);
+      setCurrentPage(1);
+    } catch (error) {
+      // TODO: fix typing, dont use any
+      if ((error as any)?.name === "AbortError") return;
+
+      const msg = error instanceof Error ? error.message : "Unknown error";
+      setError(msg);
     } finally {
       setIsLoading(false);
+      inFlight.current = null;
     }
   }
 
@@ -45,7 +69,9 @@ export function BirthdaysProvider({ children }: { children: ReactNode }) {
     () => ({
       birthdays,
       isLoading,
+      error,
       getBirthdays,
+      dismissError,
       sortOrder,
       toggleSort,
       currentPage,

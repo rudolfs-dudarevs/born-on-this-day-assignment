@@ -1,11 +1,12 @@
 import { useBirthdays } from "~/providers/BirthdayProvider";
 import Button from "~/components/button/Button";
 import style from "./birthdays.module.scss";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Pagination from "~/components/pagination/Pagination";
+import ErrorModal from "~/components/error-modal/ErrorModal";
 
 export default function Birthdays() {
-  const { birthdays, isLoading, getBirthdays, sortOrder, toggleSort, currentPage, pageSize, setCurrentPage } = useBirthdays();
+  const { birthdays, isLoading, getBirthdays, sortOrder, toggleSort, currentPage, pageSize, setCurrentPage, error, dismissError } = useBirthdays();
 
   const sortedBirthdays = useMemo(() => {
     const copy = [...birthdays];
@@ -62,6 +63,18 @@ export default function Birthdays() {
           </ul>
           <Pagination page={currentPage} totalPages={totalPages} onPage={setCurrentPage} />
         </>
+      )}
+
+      {error && (
+        <ErrorModal
+          title="Something went wrong"
+          message={error}
+          onClose={dismissError}
+          onRetry={() => {
+            dismissError();
+            getBirthdays();
+          }}
+        />
       )}
     </section>
   );
