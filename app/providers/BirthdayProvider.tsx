@@ -1,31 +1,60 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 
 type Birth = { text: string; year: number };
+
 const BASE_URL = "https://api.wikimedia.org/feed/v1/wikipedia";
 
+type SortOrder = "asc" | "desc";
+
 type BirthdaysContextValue = {
-  items: Birth[];
+  birthdays: Birth[];
   isLoading: boolean;
   getBirthdays: () => Promise<void>;
+  sortOrder: SortOrder;
+  toggleSort: () => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  pageSize: number;
+  setPageSize: (size: number) => void;
 };
 
 const BirthdaysContext = createContext<BirthdaysContextValue | undefined>(undefined);
 
 export function BirthdaysProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<Birth[]>([]);
+  const [birthdays, setBirthdays] = useState<Birth[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(7);
+
+  function toggleSort() {
+    setSortOrder((state) => (state === "desc" ? "asc" : "desc"));
+  }
 
   async function getBirthdays() {
     setIsLoading(true);
     try {
       const data = await fetchBirthdays();
-      setItems(data);
+      setBirthdays(data);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const value = useMemo(() => ({ items, isLoading, getBirthdays }), [items, isLoading]);
+  const value = useMemo(
+    () => ({
+      birthdays,
+      isLoading,
+      getBirthdays,
+      sortOrder,
+      toggleSort,
+      currentPage,
+      pageSize,
+      setCurrentPage,
+      setPageSize,
+    }),
+    [birthdays, isLoading, sortOrder, currentPage, pageSize]
+  );
 
   return <BirthdaysContext.Provider value={value}>{children}</BirthdaysContext.Provider>;
 }
