@@ -1,4 +1,27 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex-grow: 0;
+  flex-shrink: 0;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin: 1rem;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
 .birthdayList {
+  width: 100%;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -6,6 +29,7 @@
   .item {
     padding: 1rem;
     background: var(--white);
+    border-bottom: 1px solid var(--grey);
 
     .year {
       color: var(--accent);
